@@ -166,11 +166,11 @@ class SSIMLoss(_Loss):
         - Input: :math:`(N, C, H, W)`
         - Target: :math:`(N, C, H, W)`, same shape as the input
     Examples::
-        >> loss = nn.SSIMLoss()
-        >> input = torch.rand(3, 3, 256, 256, requires_grad=True)
-        >> target = torch.rand(3, 3, 256, 256)
-        >> output = loss(input, target, max_val=1.)
-        >> output.backward()
+        >>> loss = nn.SSIMLoss()
+        >>> input = torch.rand(3, 3, 256, 256, requires_grad=True)
+        >>> target = torch.rand(3, 3, 256, 256)
+        >>> output = loss(input, target, max_val=1.)
+        >>> output.backward()
     """
     __constants__ = ['filter_size', 'k1', 'k2', 'sigma' 'reduction']
 
@@ -237,11 +237,11 @@ class MultiScaleSSIMLoss(_Loss):
         - Input: :math:`(N, C, H, W)`
         - Target: :math:`(N, C, H, W)`, same shape as the input
     Examples::
-        >> loss = nn.MultiScaleSSIMLoss()
-        >> input = torch.rand(3, 3, 256, 256, requires_grad=True)
-        >> target = torch.rand(3, 3, 256, 256)
-        >> output = loss(input, target, max_val=1.)
-        >> output.backward()
+        >>> loss = nn.MultiScaleSSIMLoss()
+        >>> input = torch.rand(3, 3, 256, 256, requires_grad=True)
+        >>> target = torch.rand(3, 3, 256, 256)
+        >>> output = loss(input, target, max_val=1.)
+        >>> output.backward()
     """
     __constants__ = ['filter_size', 'k1', 'k2', 'sigma' 'reduction']
 

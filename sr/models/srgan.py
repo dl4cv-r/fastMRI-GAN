@@ -5,11 +5,11 @@ from torchvision.models import vgg19
 # See https://github.com/eriklindernoren/PyTorch-GAN/blob/master/implementations/srgan/models.py for the original code.
 
 
-class VGG19FeatureExtractor(nn.Module):
+class VGG19FeatureExtractor54(nn.Module):
     def __init__(self):
         super().__init__()
         vgg19_model = vgg19(pretrained=True)
-        self.feature_extractor = nn.Sequential(*list(vgg19_model.features.children())[:18])
+        self.feature_extractor = nn.Sequential(*list(vgg19_model.features.children())[:36])  # For 5, 4 as in the paper.
 
     def forward(self, img):
         return self.feature_extractor(img)
@@ -20,10 +20,10 @@ class ResidualBlock(nn.Module):
         super().__init__()
         self.conv_block = nn.Sequential(
             nn.Conv2d(in_features, in_features, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(in_features, 0.8),
+            nn.BatchNorm2d(in_features),
             nn.PReLU(),
             nn.Conv2d(in_features, in_features, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(in_features, 0.8),
+            nn.BatchNorm2d(in_features),
         )
 
     def forward(self, x):
@@ -44,7 +44,7 @@ class GeneratorResNet(nn.Module):
         self.res_blocks = nn.Sequential(*res_blocks)
 
         # Second conv layer post residual blocks
-        self.conv2 = nn.Sequential(nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), nn.BatchNorm2d(64, 0.8))
+        self.conv2 = nn.Sequential(nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), nn.BatchNorm2d(64))
 
         # Up-sampling layers
         up_sampling = list()
@@ -79,22 +79,11 @@ class Discriminator(nn.Module):
         patch_h, patch_w = int(in_height / 2 ** 4), int(in_width / 2 ** 4)
         self.output_shape = (1, patch_h, patch_w)
 
-        def discriminator_block(in_filters_, out_filters_, first_block=False):
-            layers_ = list()
-            layers_.append(nn.Conv2d(in_filters_, out_filters_, kernel_size=3, stride=1, padding=1))
-            if not first_block:
-                layers_.append(nn.BatchNorm2d(out_filters_))
-            layers_.append(nn.LeakyReLU(0.2, inplace=True))
-            layers_.append(nn.Conv2d(out_filters_, out_filters_, kernel_size=3, stride=2, padding=1))
-            layers_.append(nn.BatchNorm2d(out_filters_))
-            layers_.append(nn.LeakyReLU(0.2, inplace=True))
-            return layers_
-
         layers = list()
         in_filters = in_channels
         out_filter_nums = [64, 128, 256, 512]
         for i, out_filters in enumerate(out_filter_nums):
-            layers.extend(discriminator_block(in_filters, out_filters, first_block=(i == 0)))
+            layers.extend(self.discriminator_block(in_filters, out_filters, first_block=(i == 0)))
             in_filters = out_filters
 
         layers.append(nn.Conv2d(out_filter_nums[-1], 1, kernel_size=3, stride=1, padding=1))
@@ -103,3 +92,15 @@ class Discriminator(nn.Module):
 
     def forward(self, img):
         return self.model(img)
+
+    @staticmethod
+    def discriminator_block(in_filters, out_filters, first_block=False):
+        layers = list()
+        layers.append(nn.Conv2d(in_filters, out_filters, kernel_size=3, stride=1, padding=1))
+        if not first_block:
+            layers.append(nn.BatchNorm2d(out_filters))
+        layers.append(nn.LeakyReLU(0.2, inplace=True))
+        layers.append(nn.Conv2d(out_filters, out_filters, kernel_size=3, stride=2, padding=1))
+        layers.append(nn.BatchNorm2d(out_filters))
+        layers.append(nn.LeakyReLU(0.2, inplace=True))
+        return layers
