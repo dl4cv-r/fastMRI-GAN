@@ -21,8 +21,8 @@ def train():
             log_dir='./logs',
             ckpt_dir='./checkpoints',
             gpu=0,  # Set to None for CPU mode.
-            num_epochs=2,
-            max_to_keep=1,
+            num_epochs=50,
+            max_to_keep=2,
             verbose=False,
             save_best_only=True,
             data_root='./images',
@@ -83,8 +83,10 @@ def train():
 
     optimizer = optim.Adam(params=model.parameters(), lr=args.init_lr)
 
-    trainer = ModelTrainer(
-        args, model=model, optimizer=optimizer, train_loader=train_loader, val_loader=val_loader, loss_func=loss_func)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.1)  # Same settings as Facebook code.
+
+    trainer = ModelTrainer(args, model=model, optimizer=optimizer, train_loader=train_loader, val_loader=val_loader,
+                           loss_func=loss_func, scheduler=scheduler)
 
     trainer.train_model()
 

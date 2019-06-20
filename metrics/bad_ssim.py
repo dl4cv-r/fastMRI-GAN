@@ -152,4 +152,4 @@ class CSSIM(torch.nn.Module):  # Complementary SSIM.
             self.window = create_window(self.window_size, channel).to(img1.device).type(img1.dtype)
             self.channel = channel
 
-        return ssim(img1, img2, window=self.window, window_size=self.window_size, size_average=self.size_average)
+        return 1 - ssim(img1, img2, window=self.window, window_size=self.window_size, size_average=self.size_average)
