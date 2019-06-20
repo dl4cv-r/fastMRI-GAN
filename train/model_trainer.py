@@ -99,7 +99,7 @@ class ModelTrainer:
 
             if self.scheduler is not None:
                 if self.metric_scheduler:  # If the scheduler is a metric based scheduler, include metrics.
-                    self.scheduler.step(metrics=val_epoch_metrics)
+                    self.scheduler.step(metrics=val_epoch_loss)
                 else:
                     self.scheduler.step()
 
