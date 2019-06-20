@@ -30,7 +30,8 @@ def train():
             chans=32,
             num_pool_layers=4,
             pin_memory=True,
-            add_graph=False
+            add_graph=False,
+            prev_model_ckpt='checkpoints/Trial 03  2019-06-20 13-09-18/ckpt_005.tar'
         )
 
     # Replace with a proper argument parsing function later.
@@ -70,9 +71,11 @@ def train():
     args.log_path = log_path
     args.device = device
 
+    train_transform = InputTrainTransform(is_training=True)
+    val_transform = InputTrainTransform(is_training=False)
+
     # DataLoaders
-    train_loader, val_loader = create_data_loaders(
-        args=args, train_transform=InputTrainTransform(), val_transform=InputTrainTransform())
+    train_loader, val_loader = create_data_loaders(args, train_transform, val_transform)
 
     # Loss Function and output post-processing functions.
     loss_func = CSSIM(window_size=7, val_range=12)

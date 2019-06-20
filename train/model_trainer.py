@@ -55,7 +55,7 @@ class ModelTrainer:
         self.device = args.device
         self.verbose = args.verbose
         self.num_epochs = args.num_epochs
-        self.writer = SummaryWriter(log_dir=str(args.log_path))
+        self.writer = SummaryWriter(logdir=str(args.log_path))  # This changed again...
 
         # Display interval of 0 means no display of validation images on TensorBoard.
         if args.max_images <= 0:
@@ -179,9 +179,9 @@ class ModelTrainer:
             if self.display_interval and (step % self.display_interval == 0):
                 recon_grid, target_grid, delta_grid = make_grid_triplet(recons, targets)
 
-                self.writer.add_image(f'Recons/{step}', recon_grid, global_step=epoch)
-                self.writer.add_image(f'Targets/{step}', target_grid, global_step=epoch)
-                self.writer.add_image(f'Deltas/{step}', delta_grid, global_step=epoch)
+                self.writer.add_image(f'Recons/{step}', recon_grid, global_step=epoch, dataformats='HW')
+                self.writer.add_image(f'Targets/{step}', target_grid, global_step=epoch, dataformats='HW')
+                self.writer.add_image(f'Deltas/{step}', delta_grid, global_step=epoch, dataformats='HW')
 
         epoch_loss, epoch_metrics = self._get_epoch_outputs(epoch, epoch_loss_lst, epoch_metrics_lst, training=False)
         return epoch_loss, epoch_metrics
