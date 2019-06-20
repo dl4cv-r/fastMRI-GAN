@@ -30,7 +30,8 @@ def train():
             chans=32,
             num_pool_layers=4,
             pin_memory=True,
-            add_graph=False
+            add_graph=False,
+            prev_model_ckpt='checkpoints/Trial 02  2019-06-20 11-32-26/ckpt_005.tar'
         )
 
     # Replace with a proper argument parsing function later.

@@ -107,11 +107,12 @@ class CheckpointManager:
 
     def load(self, load_dir, load_optimizer=True):
         save_dict = torch.load(load_dir)
-
         self.model.load_state_dict(save_dict['model_state_dict'])
+        print(f'Loaded model parameters from {load_dir}')
 
         if load_optimizer:
             self.optimizer.load_state_dict(save_dict['optimizer_state_dict'])
+            print(f'Loaded optimizer parameters from {load_dir}')
 
     def load_latest(self, load_root):
         load_root = Path(load_root)
@@ -180,18 +181,25 @@ def create_data_loaders(args, train_transform, val_transform):
     return train_loader, val_loader
 
 
-def make_grid_triplet(recons, targets, nrow=1):
+def make_grid_triplet(recons, targets):
 
     assert recons.size() == targets.size()
 
-    recons = recons.detach().cpu()
-    targets = targets.detach().cpu()
+    recons = recons.detach().squeeze()
+    targets = targets.detach().squeeze()
 
-    small = torch.min(targets)
-    large = torch.max(targets)
+    small = targets.min()
+    large = targets.max()
+    diff = large - small
 
-    recon_grid = make_grid(recons, nrow=nrow, range=(small, large)).numpy()
-    target_grid = make_grid(targets, nrow=nrow, range=(small, large)).numpy()
+    if recons.dim() == 3:  # batch_size > 1
+        recons = torch.cat(torch.split(recons, split_size_or_sections=1, dim=0), dim=1).squeeze()
+        targets = torch.cat(torch.split(targets, split_size_or_sections=1, dim=0), dim=1).squeeze()
+
+    recon_grid = (recons - small) / diff
+    recon_grid = recon_grid.cpu().numpy()
+    target_grid = (targets - small) / diff
+    target_grid = target_grid.cpu().numpy()
     delta_grid = target_grid - recon_grid
 
     return recon_grid, target_grid, delta_grid
