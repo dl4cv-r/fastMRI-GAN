@@ -31,7 +31,7 @@ def train():
             num_pool_layers=4,
             pin_memory=True,
             add_graph=False,
-            prev_model_ckpt='checkpoints/Trial 03  2019-06-20 13-09-18/ckpt_005.tar'
+            prev_model_ckpt=''
         )
 
     # Replace with a proper argument parsing function later.

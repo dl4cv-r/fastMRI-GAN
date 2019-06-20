@@ -27,11 +27,15 @@ class InputTrainTransform:
             flip_lr = torch.rand(()) < prob
             flip_ud = torch.rand(()) < prob
 
-            if flip_lr:
+            if flip_lr and flip_ud:
+                ds_slice = torch.flip(ds_slice, dims=[-2, -1])
+                gt_slice = torch.flip(gt_slice, dims=[-2, -1])
+
+            elif flip_lr:
                 ds_slice = torch.flip(ds_slice, dims=[-1])
                 gt_slice = torch.flip(gt_slice, dims=[-1])
 
-            if flip_ud:
+            elif flip_ud:
                 ds_slice = torch.flip(ds_slice, dims=[-2])
                 gt_slice = torch.flip(gt_slice, dims=[-2])
 
