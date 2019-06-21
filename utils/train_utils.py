@@ -1,7 +1,6 @@
 import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
-from torchvision.utils import make_grid
 
 from pathlib import Path
 
@@ -134,6 +133,7 @@ def load_model_from_checkpoint(model, load_dir):
     """
     assert isinstance(model, nn.Module), 'Model must be a Pytorch module.'
     assert Path(load_dir).exists(), 'The specified directory does not exist'
+
     save_dict = torch.load(load_dir)
     model.load_state_dict(save_dict['model_state_dict'])
     return model  # Not actually necessary to return the model but doing so anyway.

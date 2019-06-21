@@ -102,3 +102,17 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Project specific
+*.h5
+*.hdf5
+*.npy
+*.tar
+*.pt
+*.pth
+*.zip
+*.log
+*.json
+*.pkl
+*.pckl
+*.pickle

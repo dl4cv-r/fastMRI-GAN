@@ -1,0 +1,9 @@
+torch
+torchvision
+numpy
+h5py
+runstats
+tqdm
+pillow
+tensorboardX
+scikit-image

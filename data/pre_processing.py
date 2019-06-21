@@ -53,5 +53,5 @@ class InputTestTransform:
             ds_slice = ds_slice.clamp(min=-6, max=6).unsqueeze(dim=0)
 
         assert isinstance(file_name, str) and isinstance(s_idx, int), 'Incorrect types!'
-        extra_params = dict(mean=mean, std=std, file_name=file_name, s_idx=s_idx, acc_fac=acc_fac, attrs=attrs)
-        return ds_slice, extra_params  # Maybe change later.
+        extra_params = dict(mean=mean, std=std, acc_fac=acc_fac, attrs=attrs)
+        return ds_slice, file_name, s_idx, extra_params

@@ -67,4 +67,4 @@ class HDF5Dataset(Dataset):
     def __getitem__(self, idx):  # Need to add transforms.
         file_name, s_idx, acc_fac = self.names_and_slices[idx]
         ds_slice, gt_slice, attrs = self.h5_slice_parse_fn(file_name, s_idx, acc_fac)
-        return self.transform(ds_slice, gt_slice, attrs, file_name, s_idx, acc_fac)
+        return self.transform(ds_slice, gt_slice, attrs, Path(file_name).name, s_idx, acc_fac)
