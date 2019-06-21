@@ -9,33 +9,10 @@ from utils.train_utils import create_data_loaders
 from train.model_trainer import ModelTrainer
 from models.unet import UnetModel
 from data.pre_processing import InputTrainTransform
-from metrics.bad_ssim import CSSIM
+from metrics.custom_losses import L1CSSIM
 
 
-def train():
-    defaults = dict(
-            challenge='multicoil',
-            batch_size=1,
-            num_workers=1,
-            init_lr=1E-3,
-            log_dir='./logs',
-            ckpt_dir='./checkpoints',
-            gpu=0,  # Set to None for CPU mode.
-            num_epochs=50,
-            max_to_keep=2,
-            verbose=False,
-            save_best_only=True,
-            data_root='./images',
-            max_images=6,  # Maximum number of images to save.
-            chans=32,
-            num_pool_layers=4,
-            pin_memory=True,
-            add_graph=False,
-            prev_model_ckpt=''
-        )
-
-    # Replace with a proper argument parsing function later.
-    args = create_arg_parser(defaults).parse_args()
+def train(args):
 
     # Creating checkpoint and logging directories, as well as the run name.
     ckpt_path = Path(args.ckpt_dir)
@@ -78,7 +55,7 @@ def train():
     train_loader, val_loader = create_data_loaders(args, train_transform, val_transform)
 
     # Loss Function and output post-processing functions.
-    loss_func = CSSIM(window_size=7, val_range=12)
+    loss_func = L1CSSIM(l1_weight=args.l1_weight, default_range=12, filter_size=7, reduction='mean')
 
     # Define model.
     model = UnetModel(
@@ -95,4 +72,28 @@ def train():
 
 
 if __name__ == '__main__':
-    train()
+    defaults = dict(
+        challenge='multicoil',
+        batch_size=1,
+        num_workers=1,
+        init_lr=1E-3,
+        log_dir='./logs',
+        ckpt_dir='./checkpoints',
+        gpu=0,  # Set to None for CPU mode.
+        num_epochs=50,
+        max_to_keep=1,
+        verbose=False,
+        save_best_only=True,
+        data_root='./images',
+        max_images=6,  # Maximum number of images to save.
+        chans=32,
+        num_pool_layers=4,
+        pin_memory=True,
+        add_graph=False,
+        l1_weight=0.05,
+        prev_model_ckpt=''
+    )
+
+    # Replace with a proper argument parsing function later.
+    parser = create_arg_parser(defaults).parse_args()
+    train(parser)
