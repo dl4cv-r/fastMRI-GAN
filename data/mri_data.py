@@ -1,12 +1,13 @@
 from pathlib import Path
 import random
+import math
 
 import h5py
 from torch.utils.data import Dataset
 
 
 class HDF5Dataset(Dataset):
-    def __init__(self, root, transform, acc_fac=None, training=True):
+    def __init__(self, root, transform, acc_fac=None, training=True, sample_rate=1):
         super().__init__()
 
         self.root = root
@@ -19,6 +20,11 @@ class HDF5Dataset(Dataset):
 
         file_names = list(Path(root).iterdir())
         file_names.sort()
+
+        if sample_rate < 1:
+            num_files = math.ceil(len(file_names) * sample_rate)
+            random.shuffle(file_names)
+            file_names = file_names[:num_files]
 
         if not file_names:  # If the list is empty for any reason
             raise FileNotFoundError("Sorry! No files present in this directory.")

@@ -148,11 +148,13 @@ def create_datasets(args, train_transform, val_transform):
     train_dataset = HDF5Dataset(
         root=Path(args.data_root) / f'{args.challenge}_train',
         transform=train_transform,
+        sample_rate=args.sample_rate
     )
 
     val_dataset = HDF5Dataset(
         root=Path(args.data_root) / f'{args.challenge}_val',
         transform=val_transform,
+        sample_rate=args.sample_rate
     )
     return train_dataset, val_dataset
 

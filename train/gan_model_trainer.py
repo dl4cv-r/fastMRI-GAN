@@ -236,7 +236,7 @@ class GANModelTrainer:
         torch.autograd.set_grad_enabled(False)
 
         epoch_loss = list()  # Appending values to list due to numerical underflow.
-        epoch_loss_components = {key: list() for key in self.loss_funcs.keys()}
+        epoch_loss_components = defaultdict(list)
 
         val_len = len(self.val_loader.dataset)
         for step, (inputs, targets, extra_params) in tqdm(enumerate(self.val_loader, start=1), total=val_len):
