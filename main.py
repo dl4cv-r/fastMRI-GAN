@@ -122,8 +122,8 @@ def train_gan_model(args):
 
     # Loss Function and output post-processing functions.
     gan_loss_func = nn.BCELoss(reduction='mean')
-    # recon_loss_func = L1CSSIM(l1_weight=args.l1_weight, default_range=12, filter_size=7, reduction='mean')
-    recon_loss_func = nn.L1Loss(reduction='mean')
+    recon_loss_func = L1CSSIM(l1_weight=args.l1_weight, default_range=12, filter_size=7, reduction='mean')
+    # recon_loss_func = nn.L1Loss(reduction='mean')
     loss_funcs = {'gan_loss_func': gan_loss_func, 'recon_loss_func': recon_loss_func}
 
     # Define model.
@@ -144,6 +144,7 @@ def train_gan_model(args):
 
 if __name__ == '__main__':
     defaults = dict(
+        sample_rate=1,
         challenge='multicoil',
         batch_size=1,
         num_workers=1,
@@ -151,8 +152,8 @@ if __name__ == '__main__':
         log_dir='./logs',
         ckpt_dir='./checkpoints',
         gpu=1,  # Set to None for CPU mode.
-        num_epochs=5,
-        max_to_keep=3,
+        num_epochs=50,
+        max_to_keep=4,
         verbose=False,
         save_best_only=True,
         data_root='./images',
@@ -161,14 +162,13 @@ if __name__ == '__main__':
         num_pool_layers=4,
         pin_memory=True,
         add_graph=False,
-        # l1_weight=1,
-        step_size=2,  # For the learning rate scheduler.
+        l1_weight=1,
+        step_size=20,  # For the learning rate scheduler.
         lr_reduction_rate=0.1,
         recon_lambda=1,
         train_method='GAN',
         gen_prev_model_ckpt='',
         disc_prev_model_ckpt='',
-        sample_rate=0.01,
         # prev_model_ckpt='',
     )
 
