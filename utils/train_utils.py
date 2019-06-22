@@ -23,6 +23,7 @@ class CheckpointManager:
         assert isinstance(max_to_keep, int) and (max_to_keep >= 0), 'Not a non-negative integer'
         assert mode in ('min', 'max'), 'Mode must be either `min` or `max`'
         ckpt_path = Path(ckpt_dir)
+        ckpt_path.mkdir(exist_ok=False)
         assert ckpt_path.exists(), 'Not a valid, existing path'
 
         record_path = ckpt_path / 'Checkpoints.txt'

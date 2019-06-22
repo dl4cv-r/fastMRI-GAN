@@ -62,7 +62,7 @@ class UnetModel(nn.Module):
         computing and computer-assisted intervention, pages 234–241. Springer, 2015.
     """
 
-    def __init__(self, in_chans, out_chans, chans, num_pool_layers, drop_prob):
+    def __init__(self, in_chans, out_chans, chans, num_pool_layers, drop_prob, residual_output=False):
         """
         Args:
             in_chans (int): Number of channels in the input to the U-Net model.
@@ -78,6 +78,7 @@ class UnetModel(nn.Module):
         self.chans = chans
         self.num_pool_layers = num_pool_layers
         self.drop_prob = drop_prob
+        self.residual_output = residual_output
 
         self.down_sample_layers = nn.ModuleList([ConvBlock(in_chans, chans, drop_prob)])
         ch = chans
@@ -104,7 +105,7 @@ class UnetModel(nn.Module):
         Returns:
             (torch.Tensor): Output tensor of shape [batch_size, self.out_chans, height, width]
         """
-        stack = []
+        stack = list()
         output = input
         # Apply down-sampling layers
         for layer in self.down_sample_layers:
@@ -119,4 +120,8 @@ class UnetModel(nn.Module):
             output = F.interpolate(output, scale_factor=2, mode='bilinear', align_corners=False)
             output = torch.cat([output, stack.pop()], dim=1)
             output = layer(output)
-        return self.conv2(output)
+
+        if self.residual_output:
+            return input + self.conv2(output)
+        else:
+            return self.conv2(output)

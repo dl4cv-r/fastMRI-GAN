@@ -20,7 +20,7 @@ class CSSIM(nn.Module):  # Complementary SSIM
                              sigma=self.sigma, reduction=self.reduction)
 
 
-class L1CSSIM(nn.Module):
+class L1CSSIM(nn.Module):  # Replace this with a system of summing losses in Model Trainer later on.
     def __init__(self, l1_weight, default_range=1, filter_size=11, k1=0.01, k2=0.03, sigma=1.5, reduction='mean'):
         super().__init__()
         self.l1_weight = l1_weight

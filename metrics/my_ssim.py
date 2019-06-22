@@ -6,6 +6,7 @@ from torch import nn
 
 
 def _fspecial_gaussian(size, channel, sigma, device):
+    # Changed this part to initialize on GPU, not on CPU.
     coords = torch.arange(start=(1-size)/2., end=(1+size)/2., step=1, dtype=torch.float32, device=device)
     coords = -coords ** 2 / (2. * sigma ** 2)
     grid = coords.view(1, -1) + coords.view(-1, 1)
@@ -56,7 +57,7 @@ def ssim_loss(input, target, max_val, filter_size=11, k1=0.01, k2=0.03,
         raise RuntimeError(f'The input device {input.device} and target device {target.device} do not match.')
 
     dim = input.dim()
-    if dim == 2:
+    if dim == 2:  # Expand dims if the inputs have too few of them. This does not copy data.
         input = input.expand(1, 1, input.dim(-2), input.dim(-1))
         target = target.expand(1, 1, target.dim(-2), target.dim(-1))
     elif dim == 3:
@@ -94,7 +95,7 @@ def ms_ssim_loss(input, target, max_val, filter_size=11, k1=0.01, k2=0.03,
         raise RuntimeError(f'The input device {input.device} and target device {target.device} do not match.')
 
     dim = input.dim()
-    if dim == 2:
+    if dim == 2:  # Expand does not copy data.
         input = input.expand(1, 1, input.dim(-2), input.dim(-1))
         target = target.expand(1, 1, target.dim(-2), target.dim(-1))
     elif dim == 3:
@@ -109,6 +110,8 @@ def ms_ssim_loss(input, target, max_val, filter_size=11, k1=0.01, k2=0.03,
     channel = input.size(1)
     kernel = _fspecial_gaussian(filter_size, channel, sigma, input.device)
 
+    # It would be nice if this did not have to be initialized every time that the function was called.
+    # Copying from host (CPU) to device (GPU) is a major bottleneck.
     weights = torch.tensor([0.0448, 0.2856, 0.3001, 0.2363, 0.1333], device=input.device)
     weights = weights.unsqueeze(-1).unsqueeze(-1)
     levels = weights.size(0)
