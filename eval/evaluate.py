@@ -83,7 +83,7 @@ class Metrics:
 def evaluate(args, recons_key):
     metrics = Metrics(METRIC_FUNCS)
 
-    for tgt_file in tqdm(args.target_path.iterdir()):
+    for tgt_file in tqdm(list(args.target_path.iterdir())):
         with h5py.File(tgt_file, mode='r') as target, h5py.File(
           args.predictions_path / tgt_file.name) as recons:
             if args.acquisition and args.acquisition != target.attrs['acquisition']:

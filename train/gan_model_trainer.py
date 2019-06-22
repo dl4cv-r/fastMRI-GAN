@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 
 import numpy as np
 from tensorboardX import SummaryWriter
+from tqdm import tqdm
 
 from time import time
 from collections import defaultdict
@@ -178,7 +179,8 @@ class GANModelTrainer:
         epoch_loss_components = defaultdict(list)
 
         # labels are fully sampled coil-wise images, not rss or esc.
-        for step, (inputs, targets, extra_params) in enumerate(self.train_loader, start=1):
+        train_len = len(self.train_loader.dataset)  # Adding progress bar for convenience.
+        for step, (inputs, targets, extra_params) in tqdm(enumerate(self.train_loader, start=1), total=train_len):
             step_loss, step_loss_components = self._train_step(inputs, targets, extra_params)
 
             # Perhaps not elegant, but NaN values make this necessary.
@@ -236,7 +238,8 @@ class GANModelTrainer:
         epoch_loss = list()  # Appending values to list due to numerical underflow.
         epoch_loss_components = {key: list() for key in self.loss_funcs.keys()}
 
-        for step, (inputs, targets, extra_params) in enumerate(self.val_loader, start=1):
+        val_len = len(self.val_loader.dataset)
+        for step, (inputs, targets, extra_params) in tqdm(enumerate(self.val_loader, start=1), total=val_len):
             recons, step_loss, step_loss_components = self._val_step(inputs, targets, extra_params)
 
             # Append to list to prevent errors from NaN and Inf values.
@@ -279,9 +282,9 @@ class GANModelTrainer:
 
             if num_nans > 0:
                 self.logger.warning(f'Epoch {epoch} {mode} {key}: {num_nans} NaN values present in {num_slices} slices')
-                epoch_loss_components[key] = torch.mean(value[is_finite]).item()
+                epoch_loss_components[key] = torch.mean(epoch_loss_component[is_finite]).item()
             else:
-                epoch_loss_components[key] = torch.mean(value).item()
+                epoch_loss_components[key] = torch.mean(epoch_loss_component).item()
 
         return epoch_loss, epoch_loss_components
 

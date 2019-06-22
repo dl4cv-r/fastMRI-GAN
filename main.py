@@ -122,7 +122,8 @@ def train_gan_model(args):
 
     # Loss Function and output post-processing functions.
     gan_loss_func = nn.BCELoss(reduction='mean')
-    recon_loss_func = L1CSSIM(l1_weight=args.l1_weight, default_range=12, filter_size=7, reduction='mean')
+    # recon_loss_func = L1CSSIM(l1_weight=args.l1_weight, default_range=12, filter_size=7, reduction='mean')
+    recon_loss_func = nn.L1Loss(reduction='mean')
     loss_funcs = {'gan_loss_func': gan_loss_func, 'recon_loss_func': recon_loss_func}
 
     # Define model.
@@ -132,8 +133,8 @@ def train_gan_model(args):
     gen_optim = optim.Adam(params=generator.parameters(), lr=args.init_lr)
     disc_optim = optim.Adam(params=discriminator.parameters(), lr=args.init_lr)
 
-    gen_scheduler = optim.lr_scheduler.StepLR(gen_optim, step_size=args.step_size, gamma=args.gamma)
-    disc_scheduler = optim.lr_scheduler.StepLR(disc_optim, step_size=args.step_size, gamma=args.gamma)
+    gen_scheduler = optim.lr_scheduler.StepLR(gen_optim, step_size=args.step_size, gamma=args.lr_reduction_rate)
+    disc_scheduler = optim.lr_scheduler.StepLR(disc_optim, step_size=args.step_size, gamma=args.lr_reduction_rate)
 
     trainer = GANModelTrainer(args, generator, discriminator, gen_optim, disc_optim, train_loader, val_loader,
                               loss_funcs, gen_scheduler, disc_scheduler)
@@ -160,12 +161,14 @@ if __name__ == '__main__':
         num_pool_layers=4,
         pin_memory=True,
         add_graph=False,
-        l1_weight=1,
+        # l1_weight=1,
         step_size=20,  # For the learning rate scheduler.
-        gamma=0.1,
+        lr_reduction_rate=0.1,
         recon_lambda=1,
         train_method='GAN',
-        prev_model_ckpt=''
+        gen_prev_model_ckpt='',
+        disc_prev_model_ckpt='',
+        # prev_model_ckpt='',
     )
 
     # Replace with a proper argument parsing function later.

@@ -27,6 +27,7 @@ class ModelEvaluator:
         self.model = load_model_from_checkpoint(model, checkpoint_path).to(device)
         print(f'Loaded model parameters from {checkpoint_path}')
         self.model.eval()
+
         self.pre_processing = pre_processing
         self.post_processing = post_processing
         self.data_dir = data_dir
@@ -102,9 +103,9 @@ if __name__ == '__main__':
         gpu=0,  # Set to None for CPU mode.
         data_dir='/home/veritas/PycharmProjects/fastMRI-GAN/images/multicoil_val',
         checkpoint_path='/home/veritas/PycharmProjects/fastMRI-GAN/checkpoints/'
-                        'Trial 06  2019-06-20 22-10-12/ckpt_014.tar',
+                        'Trial 09  2019-06-22 13-52-49/ckpt_011.tar',
 
-        out_dir='./ssim_unet_val'  # Change this every time! Attempted overrides will throw errors by design.
+        out_dir='./ssim_l1_1E-0_lr_red_unet_val'  # Change this every time! Attempted overrides will throw errors by design.
     )
 
     parser = create_arg_parser(defaults).parse_args()
