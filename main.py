@@ -224,8 +224,8 @@ if __name__ == '__main__':
         init_lr=1E-4,
         log_dir='./logs',
         ckpt_dir='./checkpoints',
-        gpu=0,  # Set to None for CPU mode.
-        num_epochs=30,
+        gpu=1,  # Set to None for CPU mode.
+        num_epochs=10,
         max_to_keep=2,
         verbose=False,
         save_best_only=True,
@@ -236,12 +236,13 @@ if __name__ == '__main__':
         pin_memory=True,
         add_graph=False,
         l1_weight=1,
-        step_size=10,  # For the learning rate scheduler.
+        step_size=5,  # For the learning rate scheduler.
         lr_reduction_rate=0.1,
         recon_lambda=10,
         lambda_gp=10,
         train_method='WGANGP',
-        gen_prev_model_ckpt='checkpoints/Trial 09  2019-06-22 13-52-49/ckpt_011.tar',
+        gen_prev_model_ckpt='/home/veritas/PycharmProjects/fastMRI-GAN/checkpoints/'
+                            'WGANGP/Trial 05  2019-06-24 18-28-17/Generator/ckpt_004.tar',
         disc_prev_model_ckpt='',
         # prev_model_ckpt='',
     )

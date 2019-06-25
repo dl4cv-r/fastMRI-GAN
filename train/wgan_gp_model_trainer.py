@@ -95,20 +95,20 @@ class ModelTrainerWGANGP:
         else:
             self.display_interval = int(len(self.val_loader.dataset) // (args.max_images * args.batch_size))
 
-        self.generator_checkpoint_manager = CheckpointManager(
+        self.gen_checkpoint_manager = CheckpointManager(
             model=self.generator, optimizer=self.gen_optim, mode='min', save_best_only=args.save_best_only,
             ckpt_dir=args.ckpt_path / 'Generator', max_to_keep=args.max_to_keep)
 
-        self.discriminator_checkpoint_manager = CheckpointManager(
+        self.disc_checkpoint_manager = CheckpointManager(
             model=self.discriminator, optimizer=self.disc_optim, mode='min', save_best_only=args.save_best_only,
             ckpt_dir=args.ckpt_path / 'Discriminator', max_to_keep=args.max_to_keep)
 
         # loading from checkpoint if specified.
         if vars(args).get('gen_prev_model_ckpt'):
-            self.generator_checkpoint_manager.load(load_dir=args.gen_prev_model_ckpt, load_optimizer=False)
+            self.gen_checkpoint_manager.load(load_dir=args.gen_prev_model_ckpt, load_optimizer=False)
 
         if vars(args).get('disc_prev_model_ckpt'):
-            self.discriminator_checkpoint_manager.load(load_dir=args.disc_prev_model_ckpt, load_optimizer=False)
+            self.disc_checkpoint_manager.load(load_dir=args.disc_prev_model_ckpt, load_optimizer=False)
 
     def train_model(self):
         self.logger.info('Beginning Training Loop.')
@@ -128,7 +128,8 @@ class ModelTrainerWGANGP:
             self._log_epoch_outputs(epoch=epoch, epoch_loss=val_epoch_loss,
                                     epoch_loss_components=val_epoch_loss_components, elapsed_secs=toc, training=False)
 
-            self.generator_checkpoint_manager.save(metric=val_epoch_loss, verbose=True)
+            self.gen_checkpoint_manager.save(metric=val_epoch_loss, verbose=True)
+            self.disc_checkpoint_manager.save(metric=val_epoch_loss, verbose=True)
 
             if self.gen_scheduler is not None:
                 if self.metric_gen_scheduler:  # If the scheduler is a metric based scheduler, include metrics.
