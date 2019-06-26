@@ -52,14 +52,14 @@ def main():
 
     time_string = time.strftime('%Y-%m-%d_%H-%M', time.localtime(time.time()))
 
-    name = 'gan_model'
+    name = 'wgan_gp_model'
 
     submission_dir = Path('./submissions') / f'{name}_{time_string}.json'
     # A url that allows direct downloads by machines. Use Google Cloud Platform or AWS, not Google Drive, etc.
-    direct_download_url = 'https://storage.googleapis.com/fastmri-challenge-submissions/multicoil_test_default.zip'
+    direct_download_url = 'https://storage.googleapis.com/fastmri-challenge-submissions/wgan_gp_test.zip'
 
     description = '''
-    Basic GAN model for comparison with other models. Uses VGG features as part of the loss.
+    WGAN GP model with pre-training as supervised model.
     '''
     members = ['veritas9872', 'yjuyoung', 'vinvino01', 'EOLab']
 

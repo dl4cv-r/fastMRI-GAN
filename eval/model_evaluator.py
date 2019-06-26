@@ -101,11 +101,11 @@ if __name__ == '__main__':
     print(f'Current Working Directory: {Path.cwd()}')
     defaults = dict(
         gpu=0,  # Set to None for CPU mode.
-        data_dir='/home/veritas/PycharmProjects/fastMRI-GAN/images/multicoil_val',
+        data_dir='/home/veritas/PycharmProjects/fastMRI-GAN/images/multicoil_test',
         checkpoint_path='/home/veritas/PycharmProjects/fastMRI-GAN/checkpoints/'
-                        'Trial 09  2019-06-22 13-52-49/ckpt_011.tar',
+                        'WGANGP/Trial 07  2019-06-25 11-44-20/Generator/ckpt_001.tar',
 
-        out_dir='./ssim_l1_1E-0_lr_red_unet_val'  # Change this every time! Attempted overrides will throw errors by design.
+        out_dir='./wgan_gp_test'  # Change this every time! Attempted overrides will throw errors by design.
     )
 
     parser = create_arg_parser(defaults).parse_args()
